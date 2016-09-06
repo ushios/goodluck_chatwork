@@ -17,7 +17,8 @@ func TestLogin(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		fmt.Println(string(res))
+		fmt.Println("ACCESS_TOKEN: ", res.AccessToken)
+		fmt.Println("myid:", res.MyID)
 	}
 
 	test(email, pass)
