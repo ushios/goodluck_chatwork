@@ -15,8 +15,10 @@ const (
 )
 
 var (
+	// AccessTokenRegExp for getting access token from html
 	AccessTokenRegExp *regexp.Regexp
-	MyIDRegExp        *regexp.Regexp
+	// MyIDRegExp for getting myid from html
+	MyIDRegExp *regexp.Regexp
 )
 
 func init() {
@@ -25,11 +27,13 @@ func init() {
 }
 
 type (
+	// Credential have login info
 	Credential struct {
 		AccessToken string `json:"access_token"`
 		MyID        string `json:"myid"`
 	}
 
+	// Contacts have contacts and room info
 	Contacts struct {
 		Contacts interface{}
 		Rooms    interface{}
@@ -77,6 +81,7 @@ func Login(email, pass string) (*Credential, error) {
 	return &cred, nil
 }
 
+// InitLoad loading contact info
 func InitLoad(cred *Credential) (*Contacts, error) {
 	client := client()
 	path := fmt.Sprintf(
