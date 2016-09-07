@@ -45,7 +45,7 @@ func Login(email, pass string) (*Credential, error) {
 	values.Add("password", pass)
 	values.Add("autologin", "on")
 
-	client := Client()
+	client := client()
 	_, err := client.PostForm(u("/login.php"), values)
 	if err != nil {
 		return &cred, err
@@ -78,7 +78,7 @@ func Login(email, pass string) (*Credential, error) {
 }
 
 func InitLoad(cred *Credential) (*Contacts, error) {
-	client := Client()
+	client := client()
 	path := fmt.Sprintf(
 		"/gateway.php?cmd=init_load&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja&rid=0&type=&new=1",
 		cred.MyID,
@@ -99,7 +99,7 @@ func u(path string) string {
 	return fmt.Sprintf("%s%s", BaseURL, path)
 }
 
-func Client() *http.Client {
+func client() *http.Client {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil
