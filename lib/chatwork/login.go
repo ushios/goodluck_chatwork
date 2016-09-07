@@ -19,6 +19,8 @@ var (
 	AccessTokenRegExp *regexp.Regexp
 	// MyIDRegExp for getting myid from html
 	MyIDRegExp *regexp.Regexp
+	// c is http client
+	c *http.Client
 )
 
 func init() {
@@ -49,13 +51,12 @@ func Login(email, pass string) (*Credential, error) {
 	values.Add("password", pass)
 	values.Add("autologin", "on")
 
-	client := client()
-	_, err := client.PostForm(u("/login.php"), values)
+	_, err := client().PostForm(u("/login.php"), values)
 	if err != nil {
 		return &cred, err
 	}
 
-	resp, err := client.Get(u("/"))
+	resp, err := client().Get(u("/"))
 	if err != nil {
 		return &cred, err
 	}
@@ -81,37 +82,22 @@ func Login(email, pass string) (*Credential, error) {
 	return &cred, nil
 }
 
-// InitLoad loading contact info
-func InitLoad(cred *Credential) (*Contacts, error) {
-	client := client()
-	path := fmt.Sprintf(
-		"/gateway.php?cmd=init_load&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja&rid=0&type=&new=1",
-		cred.MyID,
-		cred.AccessToken,
-	)
-	resp, err := client.Get(u(path))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	// TODO: response to json
-
-	return nil, nil
-}
-
 func u(path string) string {
 	return fmt.Sprintf("%s%s", BaseURL, path)
 }
 
 func client() *http.Client {
+	if c != nil {
+		return c
+	}
+
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil
 	}
-	client := &http.Client{
+	c = &http.Client{
 		Jar: jar,
 	}
 
-	return client
+	return c
 }
