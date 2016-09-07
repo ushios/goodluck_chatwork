@@ -25,15 +25,15 @@ func init() {
 }
 
 type (
-	LoginResponse struct {
-		AccessToken string
-		MyID        string
+	Credential struct {
+		AccessToken string `json:"access_token"`
+		MyID        string `json:"myid"`
 	}
 )
 
 // Login to chatwork and return ACCESSTOKEN
-func Login(email, pass string) (*LoginResponse, error) {
-	lr := LoginResponse{}
+func Login(email, pass string) (*Credential, error) {
+	cred := Credential{}
 
 	values := url.Values{}
 	values.Add("email", email)
@@ -42,40 +42,40 @@ func Login(email, pass string) (*LoginResponse, error) {
 
 	jar, err := cookiejar.New(nil)
 	if err != nil {
-		return &lr, err
+		return &cred, err
 	}
 	client := &http.Client{
 		Jar: jar,
 	}
 	_, err = client.PostForm(u("/login.php"), values)
 	if err != nil {
-		return &lr, err
+		return &cred, err
 	}
 
 	resp, err := client.Get(u("/"))
 	if err != nil {
-		return &lr, err
+		return &cred, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return &lr, err
+		return &cred, err
 	}
 
 	tokenRegRes := AccessTokenRegExp.FindSubmatch(body)
 	if len(tokenRegRes) < 2 {
-		return &lr, fmt.Errorf("cannot found ACCESS_TOKEN in %s ", u("/"))
+		return &cred, fmt.Errorf("cannot found ACCESS_TOKEN in %s ", u("/"))
 	}
-	lr.AccessToken = string(tokenRegRes[1])
+	cred.AccessToken = string(tokenRegRes[1])
 
 	myRegRes := MyIDRegExp.FindSubmatch(body)
 	if len(myRegRes) < 2 {
-		return &lr, fmt.Errorf("cannot found myid in %s", u("/"))
+		return &cred, fmt.Errorf("cannot found myid in %s", u("/"))
 	}
-	lr.MyID = string(myRegRes[1])
+	cred.MyID = string(myRegRes[1])
 
-	return &lr, nil
+	return &cred, nil
 }
 
 func u(path string) string {
