@@ -29,6 +29,11 @@ type (
 		AccessToken string `json:"access_token"`
 		MyID        string `json:"myid"`
 	}
+
+	Contacts struct {
+		Contacts interface{}
+		Rooms    interface{}
+	}
 )
 
 // Login to chatwork and return ACCESSTOKEN
@@ -40,14 +45,8 @@ func Login(email, pass string) (*Credential, error) {
 	values.Add("password", pass)
 	values.Add("autologin", "on")
 
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		return &cred, err
-	}
-	client := &http.Client{
-		Jar: jar,
-	}
-	_, err = client.PostForm(u("/login.php"), values)
+	client := Client()
+	_, err := client.PostForm(u("/login.php"), values)
 	if err != nil {
 		return &cred, err
 	}
@@ -78,6 +77,36 @@ func Login(email, pass string) (*Credential, error) {
 	return &cred, nil
 }
 
+func InitLoad(cred *Credential) (*Contacts, error) {
+	client := Client()
+	path := fmt.Sprintf(
+		"/gateway.php?cmd=init_load&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja&rid=0&type=&new=1",
+		cred.MyID,
+		cred.AccessToken,
+	)
+	resp, err := client.Get(u(path))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// TODO: response to json
+
+	return nil, nil
+}
+
 func u(path string) string {
 	return fmt.Sprintf("%s%s", BaseURL, path)
+}
+
+func Client() *http.Client {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil
+	}
+	client := &http.Client{
+		Jar: jar,
+	}
+
+	return client
 }
