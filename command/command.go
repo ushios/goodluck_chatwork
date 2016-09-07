@@ -3,11 +3,8 @@ package command
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/ushios/goodluck_chatwork/lib/chatwork"
 )
 
 func init() {
@@ -15,29 +12,27 @@ func init() {
 }
 
 // LoadCredential load from file
-func LoadCredential(path string) (*chatwork.Credential, error) {
-	var cred *chatwork.Credential
+func LoadCredential(path string) (*LoginInfo, error) {
+	var info *LoginInfo
 
 	js, err := ioutil.ReadFile(path)
 	if err != nil {
-		return cred, err
+		return info, err
 	}
 
-	if err := json.Unmarshal(js, cred); err != nil {
-		return cred, err
+	if err := json.Unmarshal(js, info); err != nil {
+		return info, err
 	}
 
-	return cred, nil
+	return info, nil
 }
 
 // SaveCredential save to file
-func SaveCredential(path string, cred *chatwork.Credential) error {
-	js, err := json.Marshal(cred)
+func SaveCredential(path string, li *LoginInfo) error {
+	js, err := json.Marshal(li)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(string(js))
 
 	f, _ := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0600)
 	defer f.Close()

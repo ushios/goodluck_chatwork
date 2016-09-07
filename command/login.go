@@ -7,6 +7,11 @@ import (
 	"github.com/ushios/goodluck_chatwork/lib/chatwork"
 )
 
+// LoginInfo .
+type LoginInfo struct {
+	Credential *chatwork.Credential `json:"credential"`
+}
+
 // CmdLogin login
 func CmdLogin(c *cli.Context) error {
 	email := c.String("email")
@@ -19,7 +24,10 @@ func CmdLogin(c *cli.Context) error {
 	}
 
 	path := c.String("credential")
-	if err := SaveCredential(path, cred); err != nil {
+	info := LoginInfo{
+		Credential: cred,
+	}
+	if err := SaveCredential(path, &info); err != nil {
 		fmt.Println(err)
 		return err
 	}

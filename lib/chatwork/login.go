@@ -91,12 +91,12 @@ func client() *http.Client {
 		return c
 	}
 
-	jar, err := cookiejar.New(nil)
+	UsedJar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil
 	}
 	c = &http.Client{
-		Jar: jar,
+		Jar: UsedJar,
 	}
 
 	return c

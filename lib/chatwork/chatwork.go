@@ -1,9 +1,6 @@
 package chatwork
 
-import (
-	"fmt"
-	"io/ioutil"
-)
+import "fmt"
 
 // InitLoad loading contact info
 func InitLoad(cred *Credential) (*Contacts, error) {
@@ -12,15 +9,18 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 		cred.MyID,
 		cred.AccessToken,
 	)
-	resp, err := client().Get(u(path))
+	rawResp, err := client().Get(u(path))
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer rawResp.Body.Close()
 
-	// TODO: response to json
-	d, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(d))
+	_, err = ReadResponse(rawResp)
+	if err != nil {
+		return nil, err
+	}
+
+	// fmt.Println(resp)
 
 	return nil, nil
 }
