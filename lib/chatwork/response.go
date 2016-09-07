@@ -22,6 +22,36 @@ type (
 	Status struct {
 		Success bool `json:"success"`
 	}
+
+	// InitLoadResult is result of InitLoad
+	InitLoadResult struct {
+		RoomDat         interface{} `json:"room_dat"`
+		ContactDat      interface{} `json:"contact_dat"`
+		MentionDat      interface{} `json:"mention_dat"`
+		MyRequestDat    interface{} `json:"myrequest_dat"`
+		RequestDat      interface{} `json:"request_dat"`
+		SettingData     interface{} `json:"setting_data"`
+		CatDat          interface{} `json:"cat_dat"`
+		AnnounceDat     interface{} `json:"announce_dat"`
+		AnnounceID      int         `json:"announce_id"`
+		LastID          string      `json:"last_id"`
+		Storage         interface{} `json:"storage"`
+		StorageLimit    int         `json:"storage_limit"`
+		ChatworkID      int         `json:"chatwork_id"`
+		Plan            string      `json:"plan"`
+		PayPlanName     string      `json:"pay_plan_name"`
+		PayType         string      `json:"pay_type"`
+		StartTime       int64       `json:"start_time"`
+		IsBusiness      bool        `json:"is_business"`
+		IsSecurity      bool        `json:"is_security"`
+		IsAdmin         bool        `json:"is_admin"`
+		IsAdminUser     bool        `json:"is_admin_user"`
+		IsEnterprise    bool        `json:"is_enterprise"`
+		Limit           interface{} `json:"limit"`
+		AvailableOption interface{} `json:"available_option"`
+		ContactLimitNum int         `json:"contact_limit_num"`
+		GroupLimitNum   int         `json:"group_limit_num"`
+	}
 )
 
 // ReadResponse reading http response
