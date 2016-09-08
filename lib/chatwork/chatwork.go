@@ -21,7 +21,5 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 		return nil, err
 	}
 
-	fmt.Println(result)
-
 	return nil, nil
 }
