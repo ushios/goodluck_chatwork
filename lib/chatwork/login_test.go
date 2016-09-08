@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	email = ""
-	pass  = ""
+	// Test account
+	email = "ushio.s+goodluck@gmail.com"
+	pass  = "goodluck"
 )
 
 func TestLogin(t *testing.T) {
