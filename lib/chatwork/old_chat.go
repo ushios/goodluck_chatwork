@@ -1,16 +1,32 @@
 package chatwork
 
-import (
-	"fmt"
-	"io/ioutil"
-)
+import "fmt"
 
-// LoadOldChat loading chat logs
-func LoadOldChat(cred *Credential, roomID int64) (interface{}, error) {
-	return loadOldChat(cred, roomID, 0)
+// LoadAndSaveAllChat .
+func LoadAndSaveAllChat(cred *Credential, roomID int64) error {
+	chatID := int64(0)
+
+	for {
+		res, err := LoadOldChat(cred, roomID, chatID)
+		if err != nil {
+			return err
+		}
+
+		if len(res.ChatList) < 1 {
+			break
+		}
+
+		for _, chat := range res.ChatList {
+			fmt.Println(chat.ID, chat.Message)
+			chatID = chat.ID
+		}
+
+	}
+	return nil
 }
 
-func loadOldChat(cred *Credential, roomID, firstChatID int64) (interface{}, error) {
+// LoadOldChat loading chat logs
+func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResult, error) {
 	path := fmt.Sprintf(
 		"/gateway.php?cmd=load_old_chat&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja&room_id=%d&last_chat_id=0&first_chat_id=%d&jump_to_chat_id=0&unread_num=0&file=1&desc=1",
 		cred.MyID,
@@ -24,8 +40,11 @@ func loadOldChat(cred *Credential, roomID, firstChatID int64) (interface{}, erro
 	}
 	defer rawResp.Body.Close()
 
-	d, _ := ioutil.ReadAll(rawResp.Body)
-	fmt.Println(string(d))
+	result := LoadOldChatResult{}
+	_, err = ReadResponse(rawResp, &result)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	return &result, nil
 }

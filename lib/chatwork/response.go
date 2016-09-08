@@ -89,6 +89,20 @@ type (
 		MRID      int64  `json:"mrid"`
 		RID       int64  `json:"rid"`
 	}
+
+	// LoadOldChatResult is result
+	LoadOldChatResult struct {
+		ChatList []ChatMessage `json:"chat_list"`
+	}
+
+	// ChatMessage is a message of chat
+	ChatMessage struct {
+		ID      int64  `json:"id"`
+		AID     int64  `json:"aid"`
+		Message string `json:"msg"`
+		TM      int    `json:"tm"`
+		UTM     int    `json:"utm"`
+	}
 )
 
 // ReadResponse reading http response
@@ -101,7 +115,7 @@ func ReadResponse(r *http.Response, result interface{}) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(d))
+	// fmt.Println(string(d))
 	if err := json.Unmarshal(d, &resp); err != nil {
 		return nil, err
 	}
