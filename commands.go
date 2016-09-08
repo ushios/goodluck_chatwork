@@ -8,7 +8,8 @@ import (
 	"github.com/ushios/goodluck_chatwork/command"
 )
 
-var DefaultCredentialFilePath string = "./.goodluck_chatwork"
+// DefaultCredentialFilePath .
+var DefaultCredentialFilePath = "./.goodluck_chatwork"
 
 // GlobalFlags .
 var GlobalFlags = []cli.Flag{}
