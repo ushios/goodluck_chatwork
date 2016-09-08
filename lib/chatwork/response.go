@@ -25,8 +25,8 @@ type (
 
 	// InitLoadResult is result of InitLoad
 	InitLoadResult struct {
-		RoomDat         *map[int64]RoomDat    `json:"room_dat"`
-		ContactDat      *map[int64]ContactDat `json:"contact_dat"`
+		RoomDat         map[string]RoomDat    `json:"room_dat"`
+		ContactDat      map[string]ContactDat `json:"contact_dat"`
 		MentionDat      interface{}           `json:"mention_dat"`
 		MyRequestDat    interface{}           `json:"myrequest_dat"`
 		RequestDat      interface{}           `json:"request_dat"`
@@ -36,8 +36,8 @@ type (
 		AnnounceID      int                   `json:"announce_id"`
 		LastID          string                `json:"last_id"`
 		Storage         interface{}           `json:"storage"`
-		StorageLimit    int                   `json:"storage_limit"`
-		ChatworkID      int                   `json:"chatwork_id"`
+		StorageLimit    string                `json:"storage_limit"`
+		ChatworkID      string                `json:"chatwork_id"`
 		Plan            string                `json:"plan"`
 		PayPlanName     string                `json:"pay_plan_name"`
 		PayType         string                `json:"pay_type"`
@@ -49,24 +49,24 @@ type (
 		IsEnterprise    bool                  `json:"is_enterprise"`
 		Limit           interface{}           `json:"limit"`
 		AvailableOption interface{}           `json:"available_option"`
-		ContactLimitNum int                   `json:"contact_limit_num"`
+		ContactLimitNum interface{}           `json:"contact_limit_num"`
 		GroupLimitNum   int                   `json:"group_limit_num"`
 	}
 
 	// RoomDat is room data
 	RoomDat struct {
-		MID  int64         `json:"mid"`
-		R    int           `json:"r"`
-		S    int           `json:"s"`
-		TP   int           `json:"tp"`
-		C    int           `json:"c"`
-		F    int           `json:"f"`
-		T    int           `json:"t"`
-		LT   int64         `json:"lt"`
-		Name string        `json:"n"`
-		LN   string        `json:"ln"`
-		IC   string        `json:"ic"`
-		M    map[int64]int `json:"m"`
+		MID  int64          `json:"mid"`
+		R    int            `json:"r"`
+		S    int            `json:"s"`
+		TP   int            `json:"tp"`
+		C    int            `json:"c"`
+		F    int            `json:"f"`
+		T    int            `json:"t"`
+		LT   int64          `json:"lt"`
+		Name string         `json:"n,omitempty"`
+		LN   string         `json:"ln,omitempty"`
+		IC   string         `json:"ic,omitempty"`
+		M    map[string]int `json:"m"`
 	}
 
 	// ContactDat is contacts data
@@ -92,14 +92,16 @@ type (
 )
 
 // ReadResponse reading http response
-func ReadResponse(r *http.Response) (*Response, error) {
-	resp := Response{}
+func ReadResponse(r *http.Response, result interface{}) (*Response, error) {
+	resp := Response{
+		Result: result,
+	}
 
 	d, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(string(d))
 	if err := json.Unmarshal(d, &resp); err != nil {
 		return nil, err
 	}

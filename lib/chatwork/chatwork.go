@@ -15,12 +15,13 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 	}
 	defer rawResp.Body.Close()
 
-	_, err = ReadResponse(rawResp)
+	result := InitLoadResult{}
+	_, err = ReadResponse(rawResp, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	// fmt.Println(resp)
+	fmt.Println(result)
 
 	return nil, nil
 }
