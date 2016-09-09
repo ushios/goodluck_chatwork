@@ -24,6 +24,12 @@ Show room info list.
 
 ```bash
 $ goodluck_chatwork --email xxxx@xxx.xxx --password yourpassword
++----------+------+
+|    ID    | NAME |
++----------+------+
+| 12345678 | xxxx |
+| 87654321 | yyyy |
++----------+------+
 ```
 
 ### Log
