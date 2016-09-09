@@ -29,15 +29,15 @@ func CmdLogin(c *cli.Context) error {
 		return err
 	}
 
-	path := c.String("credential")
-	info := LoginInfo{
-		Credential: cred,
-	}
-	if err := SaveCredential(path, &info); err != nil {
-		fmt.Println(err)
-		return err
-	}
-	fmt.Printf("Credential file created to %s \n", path)
+	// path := c.String("credential")
+	// info := LoginInfo{
+	// 	Credential: cred,
+	// }
+	// if err := SaveCredential(path, &info); err != nil {
+	// 	fmt.Println(err)
+	// 	return err
+	// }
+	// fmt.Printf("Credential file created to %s \n", path)
 
 	contacts, err := chatwork.InitLoad(cred)
 	if err != nil {

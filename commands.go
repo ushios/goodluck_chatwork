@@ -36,6 +36,25 @@ var Commands = []cli.Command{
 			},
 		},
 	},
+	{
+		Name:        "log",
+		Description: "List chat log",
+		Action:      command.CmdLog,
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "email",
+				Usage: "Your registed email address",
+			},
+			cli.StringFlag{
+				Name:  "password",
+				Usage: "Your password",
+			},
+			cli.Int64Flag{
+				Name:  "room",
+				Usage: "room or contact id",
+			},
+		},
+	},
 }
 
 // CommandNotFound .
