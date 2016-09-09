@@ -21,5 +21,38 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	c := createContacts(&result)
+
+	return c, nil
+}
+
+func createContacts(res *InitLoadResult) *Contacts {
+	cs := Contacts{
+		ContactList: []Contact{},
+		RoomList:    []Room{},
+	}
+
+	cMap := res.ContactDat
+	for k, con := range cMap {
+		if !con.IsDeleted {
+			c := Contact{
+				ID:   k,
+				Name: con.Name,
+			}
+
+			cs.ContactList = append(cs.ContactList, c)
+		}
+	}
+
+	rMap := res.RoomDat
+	for k, rm := range rMap {
+		r := Room{
+			ID:   k,
+			Name: rm.Name,
+		}
+
+		cs.RoomList = append(cs.RoomList, r)
+	}
+
+	return &cs
 }

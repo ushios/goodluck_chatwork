@@ -37,8 +37,20 @@ type (
 
 	// Contacts have contacts and room info
 	Contacts struct {
-		Contacts interface{}
-		Rooms    interface{}
+		ContactList []Contact
+		RoomList    []Room
+	}
+
+	// Contact data
+	Contact struct {
+		ID   string
+		Name string
+	}
+
+	// Room data
+	Room struct {
+		ID   string
+		Name string
 	}
 )
 
