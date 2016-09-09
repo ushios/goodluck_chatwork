@@ -1,6 +1,10 @@
 goodluck_chatwork
 ==================
 
+
+[![Build Status](https://travis-ci.org/ushios/goodluck_chatwork.svg?branch=master)](https://travis-ci.org/ushios/goodluck_chatwork)
+[![Coverage Status](https://coveralls.io/repos/ushios/goodluck_chatwork/badge.svg?branch=master&service=github)](https://coveralls.io/github/ushios/goodluck_chatwork?branch=master)
+
 beta
 
 ## Installation
