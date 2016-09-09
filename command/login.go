@@ -45,17 +45,17 @@ func CmdLogin(c *cli.Context) error {
 		return err
 	}
 
-	cTable := tablewriter.NewWriter(os.Stdout)
-	cTable.SetHeader([]string{"ID", "Name"})
-	for _, contact := range contacts.ContactList {
-		row := []string{
-			contact.ID,
-			contact.Name,
-		}
-		cTable.Append(row)
-	}
-	fmt.Println("\n\nContact List ======")
-	cTable.Render()
+	// cTable := tablewriter.NewWriter(os.Stdout)
+	// cTable.SetHeader([]string{"ID", "Name"})
+	// for _, contact := range contacts.ContactList {
+	// 	row := []string{
+	// 		contact.ID,
+	// 		contact.Name,
+	// 	}
+	// 	cTable.Append(row)
+	// }
+	// fmt.Println("\n\nContact List ======")
+	// cTable.Render()
 
 	rTable := tablewriter.NewWriter(os.Stdout)
 	rTable.SetHeader([]string{"ID", "Name"})

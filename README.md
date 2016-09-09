@@ -20,7 +20,7 @@ $ go get github.com/ushios/goodluck_chatwork
 
 ### Login
 
-Show contacts and rooms list.
+Show room info list.
 
 ```bash
 $ goodluck_chatwork --email xxxx@xxx.xxx --password yourpassword
