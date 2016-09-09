@@ -1,6 +1,16 @@
 package chatwork
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
+
+var (
+	// Retry setting
+	Retry = 5
+	// ChatLength max
+	ChatLength = 40
+)
 
 // LoadAndSaveAllChat .
 func LoadAndSaveAllChat(cred *Credential, roomID int64) error {
@@ -12,15 +22,16 @@ func LoadAndSaveAllChat(cred *Credential, roomID int64) error {
 			return err
 		}
 
-		if len(res.ChatList) < 1 {
+		for _, chat := range res.ChatList {
+			tm := time.Unix(int64(chat.TM), 0)
+			fmt.Println(chat.ID, tm.Format(time.RFC3339), chat.Message)
+		}
+
+		if len(res.ChatList) < ChatLength {
 			break
 		}
 
-		for _, chat := range res.ChatList {
-			fmt.Println(chat.ID, chat.Message)
-			chatID = chat.ID
-		}
-
+		chatID = res.ChatList[len(res.ChatList)-1].ID
 	}
 	return nil
 }
