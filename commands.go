@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/ushios/goodluck_chatwork/command"
 )
 
@@ -49,7 +49,7 @@ var Commands = []cli.Command{
 				Name:  "password",
 				Usage: "Your password",
 			},
-			cli.Int64Flag{
+			cli.IntFlag{
 				Name:  "room",
 				Usage: "room or contact id",
 			},

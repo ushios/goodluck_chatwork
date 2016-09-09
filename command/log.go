@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/ushios/goodluck_chatwork/lib/chatwork"
 )
 
@@ -22,8 +22,8 @@ func CmdLog(c *cli.Context) error {
 		return err
 	}
 
-	roomID := c.Int64("room")
-	err = chatwork.LoadAndSaveAllChat(cred, roomID)
+	roomID := c.Int("room")
+	err = chatwork.LoadAndSaveAllChat(cred, int64(roomID))
 	if err != nil {
 		fmt.Println(err)
 		return err
