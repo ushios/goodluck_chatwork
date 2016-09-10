@@ -13,7 +13,7 @@ var (
 )
 
 // LoadAndSaveAllChat .
-func LoadAndSaveAllChat(cred *Credential, roomID int64) error {
+func LoadAndSaveAllChat(cred *Credential, roomID int64, interval time.Duration) error {
 	chatID := int64(0)
 
 	for {
@@ -31,6 +31,7 @@ func LoadAndSaveAllChat(cred *Credential, roomID int64) error {
 			break
 		}
 
+		time.Sleep(interval)
 		chatID = res.ChatList[len(res.ChatList)-1].ID
 	}
 	return nil

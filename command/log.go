@@ -2,9 +2,15 @@ package command
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/urfave/cli"
 	"github.com/ushios/goodluck_chatwork/lib/chatwork"
+)
+
+var (
+	// DefaultInterval wait second
+	DefaultInterval time.Duration = 1 * time.Second
 )
 
 // CmdLog show chat log
@@ -23,7 +29,7 @@ func CmdLog(c *cli.Context) error {
 	}
 
 	roomID := c.Int("room")
-	err = chatwork.LoadAndSaveAllChat(cred, int64(roomID))
+	err = chatwork.LoadAndSaveAllChat(cred, int64(roomID), DefaultInterval)
 	if err != nil {
 		fmt.Println(err)
 		return err
