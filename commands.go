@@ -17,9 +17,9 @@ var GlobalFlags = []cli.Flag{}
 // Commands .
 var Commands = []cli.Command{
 	{
-		Name:        "login",
+		Name:        "list",
 		Description: "Create credential file",
-		Action:      command.CmdLogin,
+		Action:      command.CmdList,
 		Flags: []cli.Flag{
 			cli.StringFlag{
 				Name:  "email",

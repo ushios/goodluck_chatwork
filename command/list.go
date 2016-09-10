@@ -14,8 +14,8 @@ type LoginInfo struct {
 	Credential *chatwork.Credential `json:"credential"`
 }
 
-// CmdLogin login
-func CmdLogin(c *cli.Context) error {
+// CmdList show list
+func CmdList(c *cli.Context) error {
 	email := c.String("email")
 	password := c.String("password")
 

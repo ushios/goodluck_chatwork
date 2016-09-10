@@ -59,3 +59,7 @@ func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResul
 
 	return &result, nil
 }
+
+func FileInfo(cred *Credential) {
+
+}

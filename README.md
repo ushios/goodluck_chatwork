@@ -23,7 +23,7 @@ $ go get github.com/ushios/goodluck_chatwork
 Show room info list.
 
 ```bash
-$ goodluck_chatwork --email xxxx@xxx.xxx --password yourpassword
+$ goodluck_chatwork list --email xxxx@xxx.xxx --password yourpassword
 +----------+------+
 |    ID    | NAME |
 +----------+------+
@@ -35,7 +35,7 @@ $ goodluck_chatwork --email xxxx@xxx.xxx --password yourpassword
 ### Log
 
 ```bash
-$ goodluck_chatwork --email xxxx@xxx.xxx --password yourpassowrd --room 123456789
+$ goodluck_chatwork log --email xxxx@xxx.xxx --password yourpassowrd --room 123456789
 ```
 
 You can see room `ID` when using [login](#login) command.
