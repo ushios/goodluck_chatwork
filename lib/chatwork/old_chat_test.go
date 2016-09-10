@@ -3,6 +3,7 @@ package chatwork
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestLoadOldChat(t *testing.T) {
@@ -31,11 +32,31 @@ func TestLoadAndSaveAllChat(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := LoadAndSaveAllChat(cred, roomID); err != nil {
+		interval := 1 * time.Second
+		if err := LoadAndSaveAllChat(cred, roomID, interval); err != nil {
 			t.Fatal(err)
 		}
 
 	}
 
 	test(email, pass, 57468721)
+}
+
+func TestFileInfo(t *testing.T) {
+	test := func(id, pass string, fID int64) {
+		cred, err := Login(id, pass)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		res, err := DownloadFileInfo(cred, fID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		fmt.Println("filename:", res.Filename)
+		fmt.Println("url:", res.URL)
+	}
+
+	test(email, pass, 102484735)
 }

@@ -2,6 +2,9 @@ package chatwork
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
+	"regexp"
 	"time"
 )
 
@@ -10,7 +13,19 @@ var (
 	Retry = 5
 	// ChatLength max
 	ChatLength = 40
+	// FilenameRegExp from header
+	FilenameRegExp *regexp.Regexp
 )
+
+// FileInfo .
+type FileInfo struct {
+	Filename string
+	URL      *url.URL
+}
+
+func init() {
+	FilenameRegExp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
+}
 
 // LoadAndSaveAllChat .
 func LoadAndSaveAllChat(cred *Credential, roomID int64, interval time.Duration) error {
@@ -61,6 +76,45 @@ func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResul
 	return &result, nil
 }
 
-func FileInfo(cred *Credential) {
+// DownloadFileInfo get file info
+func DownloadFileInfo(cred *Credential, fID int64) (*FileInfo, error) {
+	fi := FileInfo{}
 
+	path := fmt.Sprintf(
+		"/gateway.php?cmd=download_file&bin=1&file_id=%d",
+		fID,
+	)
+	rawResp, err := client().Get(u(path))
+	if err != nil {
+		return nil, err
+	}
+	defer rawResp.Body.Close()
+
+	// create url
+	urlString := rawResp.Header.Get("Location")
+	fi.URL, err = url.Parse(urlString)
+	if err != nil {
+		return nil, err
+	}
+
+	// create filename
+	fi.Filename, err = filename(rawResp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &fi, nil
+}
+
+func filename(resp *http.Response) (string, error) {
+	cd := resp.Header.Get("Content-disposition")
+	if cd == "" {
+		return "", fmt.Errorf("Content-disposition was empty")
+	}
+	res := FilenameRegExp.FindStringSubmatch(cd)
+	if len(res) < 2 {
+		return "", fmt.Errorf("filename not found")
+	}
+
+	return res[1], nil
 }
