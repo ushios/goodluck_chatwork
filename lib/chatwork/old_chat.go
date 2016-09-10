@@ -4,8 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"time"
+)
+
+const (
+	// AttachementDirectoryName file dir.
+	AttachementDirectoryName = "./attachements"
 )
 
 var (
@@ -102,7 +108,27 @@ func DownloadFileInfo(fID int64) (*FileInfo, error) {
 		return nil, err
 	}
 
+	// Downloading file
+	if err := checkDir(AttachementDirectoryName); err != nil {
+		return nil, err
+	}
+
 	return &fi, nil
+}
+
+func checkDir(path string) error {
+	_, err := os.Stat(path)
+	if err == nil {
+		return nil
+	}
+
+	if os.IsNotExist(err) {
+		fmt.Println("mkdir")
+		os.MkdirAll(path, 0755)
+		return nil
+	}
+
+	return err
 }
 
 func filename(resp *http.Response) (string, error) {
