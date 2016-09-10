@@ -17,14 +17,14 @@ var (
 	FilenameRegExp *regexp.Regexp
 )
 
+func init() {
+	FilenameRegExp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
+}
+
 // FileInfo .
 type FileInfo struct {
 	Filename string
 	URL      *url.URL
-}
-
-func init() {
-	FilenameRegExp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
 }
 
 // LoadAndSaveAllChat .
@@ -77,7 +77,7 @@ func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResul
 }
 
 // DownloadFileInfo get file info
-func DownloadFileInfo(cred *Credential, fID int64) (*FileInfo, error) {
+func DownloadFileInfo(fID int64) (*FileInfo, error) {
 	fi := FileInfo{}
 
 	path := fmt.Sprintf(
@@ -90,12 +90,11 @@ func DownloadFileInfo(cred *Credential, fID int64) (*FileInfo, error) {
 	}
 	defer rawResp.Body.Close()
 
-	// create url
-	urlString := rawResp.Header.Get("Location")
-	fi.URL, err = url.Parse(urlString)
-	if err != nil {
-		return nil, err
-	}
+	// // create url
+	// fi.URL, err = rawResp.Location()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// create filename
 	fi.Filename, err = filename(rawResp)
@@ -116,5 +115,10 @@ func filename(resp *http.Response) (string, error) {
 		return "", fmt.Errorf("filename not found")
 	}
 
-	return res[1], nil
+	filename, err := url.QueryUnescape(res[1])
+	if err != nil {
+		return "", err
+	}
+
+	return filename, nil
 }

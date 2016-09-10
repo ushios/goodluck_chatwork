@@ -42,14 +42,14 @@ func TestLoadAndSaveAllChat(t *testing.T) {
 	test(email, pass, 57468721)
 }
 
-func TestFileInfo(t *testing.T) {
+func TestDownloadFileInfo(t *testing.T) {
 	test := func(id, pass string, fID int64) {
-		cred, err := Login(id, pass)
+		_, err := Login(id, pass)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		res, err := DownloadFileInfo(cred, fID)
+		res, err := DownloadFileInfo(fID)
 		if err != nil {
 			t.Fatal(err)
 		}
