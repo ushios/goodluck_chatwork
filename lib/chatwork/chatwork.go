@@ -193,6 +193,6 @@ func downloadDirname(roomID int64) string {
 		roomID,
 		AttachementDirectoryName,
 	)
-	fmt.Println("dirname", dir)
+
 	return dir
 }
