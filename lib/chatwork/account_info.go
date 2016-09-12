@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"net/url"
 )
 
 type (
@@ -31,14 +31,17 @@ func AccountInfo(cred *Credential, c *Contacts) (*[]AccountInfoResponse, error) 
 		return nil, err
 	}
 
-	postData := fmt.Sprintf("pdata=%s", string(postJSON))
+	postData := string(postJSON)
 	fmt.Println(postData)
 	path := fmt.Sprintf("/gateway.php?cmd=get_account_info&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja",
 		cred.MyID,
 		cred.AccessToken,
 	)
 
-	resp, err := client().Post(u(path), "text/plain", strings.NewReader(postData))
+	values := url.Values{}
+	values.Add("pdata", postData)
+
+	resp, err := client().PostForm(u(path), values)
 	if err != nil {
 		return nil, err
 	}
