@@ -20,7 +20,8 @@ type (
 
 	// Status have api response success or not
 	Status struct {
-		Success bool `json:"success"`
+		Success bool   `json:"success"`
+		Message string `json:"message"`
 	}
 
 	// InitLoadResult is result of InitLoad

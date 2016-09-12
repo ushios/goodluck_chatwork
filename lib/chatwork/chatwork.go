@@ -5,7 +5,52 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"strconv"
 )
+
+type (
+	// Contacts have contacts and room info
+	Contacts struct {
+		ContactList []Contact
+		RoomList    []Room
+	}
+
+	// Contact data
+	Contact struct {
+		ID   string
+		AID  int64
+		Name string
+	}
+
+	// Room data
+	Room struct {
+		ID      string
+		AIDList []int64
+		Name    string
+	}
+)
+
+// AIDs .
+func (c *Contacts) AIDs() []int64 {
+	ids := []int64{}
+	m := map[int64]bool{}
+
+	for _, con := range c.ContactList {
+		m[con.AID] = true
+	}
+
+	for _, room := range c.RoomList {
+		for _, aid := range room.AIDList {
+			m[aid] = true
+		}
+	}
+
+	for key := range m {
+		ids = append(ids, key)
+	}
+
+	return ids
+}
 
 // InitLoad loading contact info
 func InitLoad(cred *Credential) (*Contacts, error) {
@@ -26,12 +71,15 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 		return nil, err
 	}
 
-	c := createContacts(&result)
+	c, err := createContacts(&result)
+	if err != nil {
+		return nil, err
+	}
 
 	return c, nil
 }
 
-func createContacts(res *InitLoadResult) *Contacts {
+func createContacts(res *InitLoadResult) (*Contacts, error) {
 	cs := Contacts{
 		ContactList: []Contact{},
 		RoomList:    []Room{},
@@ -42,6 +90,7 @@ func createContacts(res *InitLoadResult) *Contacts {
 		if !con.IsDeleted {
 			c := Contact{
 				ID:   k,
+				AID:  con.AID,
 				Name: con.Name,
 			}
 
@@ -51,15 +100,25 @@ func createContacts(res *InitLoadResult) *Contacts {
 
 	rMap := res.RoomDat
 	for k, rm := range rMap {
+		aIDList := []int64{}
+		for key := range rm.M {
+			aID, err := strconv.ParseInt(key, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			aIDList = append(aIDList, aID)
+		}
+
 		r := Room{
-			ID:   k,
-			Name: rm.Name,
+			ID:      k,
+			AIDList: aIDList,
+			Name:    rm.Name,
 		}
 
 		cs.RoomList = append(cs.RoomList, r)
 	}
 
-	return &cs
+	return &cs, nil
 }
 
 func u(path string) string {

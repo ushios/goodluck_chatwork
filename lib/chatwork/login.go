@@ -33,24 +33,6 @@ type (
 		AccessToken string `json:"access_token"`
 		MyID        string `json:"myid"`
 	}
-
-	// Contacts have contacts and room info
-	Contacts struct {
-		ContactList []Contact
-		RoomList    []Room
-	}
-
-	// Contact data
-	Contact struct {
-		ID   string
-		Name string
-	}
-
-	// Room data
-	Room struct {
-		ID   string
-		Name string
-	}
 )
 
 // Login to chatwork and return ACCESSTOKEN
