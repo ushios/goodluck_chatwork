@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"regexp"
 )
@@ -92,24 +91,4 @@ func Login(email, pass string) (*Credential, error) {
 	cred.MyID = string(myRegRes[1])
 
 	return &cred, nil
-}
-
-func u(path string) string {
-	return fmt.Sprintf("%s%s", BaseURL, path)
-}
-
-func client() *http.Client {
-	if c != nil {
-		return c
-	}
-
-	UsedJar, err := cookiejar.New(nil)
-	if err != nil {
-		return nil
-	}
-	c = &http.Client{
-		Jar: UsedJar,
-	}
-
-	return c
 }

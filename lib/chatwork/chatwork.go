@@ -1,6 +1,11 @@
 package chatwork
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"net/http/cookiejar"
+	"os"
+)
 
 // InitLoad loading contact info
 func InitLoad(cred *Credential) (*Contacts, error) {
@@ -55,4 +60,38 @@ func createContacts(res *InitLoadResult) *Contacts {
 	}
 
 	return &cs
+}
+
+func u(path string) string {
+	return fmt.Sprintf("%s%s", BaseURL, path)
+}
+
+func client() *http.Client {
+	if c != nil {
+		return c
+	}
+
+	UsedJar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil
+	}
+	c = &http.Client{
+		Jar: UsedJar,
+	}
+
+	return c
+}
+
+func checkDir(path string) error {
+	_, err := os.Stat(path)
+	if err == nil {
+		return nil
+	}
+
+	if os.IsNotExist(err) {
+		os.MkdirAll(path, 0755)
+		return nil
+	}
+
+	return err
 }

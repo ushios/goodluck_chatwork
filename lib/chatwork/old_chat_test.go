@@ -42,20 +42,17 @@ func TestLoadAndSaveAllChat(t *testing.T) {
 	test(email, pass, 57468721)
 }
 
-func TestDownloadFileInfo(t *testing.T) {
+func TestDownloadFile(t *testing.T) {
 	test := func(id, pass string, fID int64) {
 		_, err := Login(id, pass)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		res, err := DownloadFileInfo(fID)
+		err = DownloadFile(1, fID)
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		fmt.Println("filename:", res.Filename)
-		fmt.Println("url:", res.URL)
 	}
 
 	test(email, pass, 102484735)
