@@ -47,5 +47,4 @@ You can see room `ID` when using [login](#login) command.
 ## TODO
 
 - Using mobile user-agent for trans capacity
-- Saving chat log files.
 - get out LoadAndSaveAllChat func from chatwork package
