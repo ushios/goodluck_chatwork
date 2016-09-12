@@ -10,7 +10,7 @@ import (
 
 var (
 	// DefaultInterval wait second
-	DefaultInterval time.Duration = 1 * time.Second
+	DefaultInterval = 1 * time.Second
 )
 
 // CmdLog show chat log
@@ -28,8 +28,14 @@ func CmdLog(c *cli.Context) error {
 		return err
 	}
 
+	contacts, err := chatwork.InitLoad(cred)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	roomID := c.Int("room")
-	err = chatwork.LoadAndSaveAllChat(cred, int64(roomID), DefaultInterval)
+	err = chatwork.LoadAndSaveAllChat(cred, contacts, int64(roomID), DefaultInterval)
 	if err != nil {
 		fmt.Println(err)
 		return err

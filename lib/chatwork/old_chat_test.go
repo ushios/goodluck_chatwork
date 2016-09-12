@@ -32,8 +32,13 @@ func TestLoadAndSaveAllChat(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		contacts, err := InitLoad(cred)
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		interval := 1 * time.Second
-		if err := LoadAndSaveAllChat(cred, roomID, interval); err != nil {
+		if err := LoadAndSaveAllChat(cred, contacts, roomID, interval); err != nil {
 			t.Fatal(err)
 		}
 
@@ -49,11 +54,29 @@ func TestDownloadFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = DownloadFile(1, fID)
+		err = DownloadFile(fID, downloadDirname(1))
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 
 	test(email, pass, 102484735)
+}
+
+func TestDownloadRegexp(t *testing.T) {
+	test := func(message string, ei string) {
+		res := DownloadRegexp.FindStringSubmatch(message)
+		if len(res) < 2 {
+			t.Fatalf("download regexp match error")
+		}
+
+		if ei != res[1] {
+			t.Errorf("expected(%s) but (%s)", ei, res[1])
+		}
+	}
+
+	test(
+		`[info][title][dtext:file_uploaded][/title][preview id=102484735 ht=150][download:102484735]\u30b9\u30af\u30ea\u30fc\u30f3\u30b7\u30e7\u30c3\u30c8 2016-09-06 19.28.59.png (132.74 KB)[/download][/info]`,
+		"102484735",
+	)
 }

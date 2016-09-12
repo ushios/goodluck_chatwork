@@ -15,6 +15,7 @@ type (
 
 	// Account .
 	Account struct {
+		ID   int64
 		Name string
 	}
 )
@@ -54,6 +55,7 @@ func AccountInfo(cred *Credential, c *Contacts) (*map[int64]Account, error) {
 	m := map[int64]Account{}
 	for _, acc := range result.AccountDat {
 		m[acc.AID] = Account{
+			ID:   acc.AID,
 			Name: acc.Name,
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"net/http/cookiejar"
 	"os"
 	"strconv"
+	"time"
 )
 
 type (
@@ -153,4 +154,45 @@ func checkDir(path string) error {
 	}
 
 	return err
+}
+
+func createRow(roomID int64, chat *ChatMessage, acc *Account) ([]string, error) {
+	chatID := strconv.FormatInt(chat.ID, 10)
+	tm := time.Unix(int64(chat.TM), 0)
+	name := acc.Name
+	accID := strconv.FormatInt(acc.ID, 10)
+	message := chat.Message
+
+	download(roomID, message)
+
+	// fmt.Println(chat.ID, tm.Format(time.RFC3339), acc.Name, acc.ID, chat.Message)
+	return []string{chatID, tm.Format(time.RFC3339), name, accID, message}, nil
+}
+
+func download(roomID int64, message string) error {
+	res := DownloadRegexp.FindStringSubmatch(message)
+	if len(res) < 2 {
+		return nil
+	}
+
+	fID, err := strconv.ParseInt(res[1], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	if err := DownloadFile(fID, downloadDirname(roomID)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func downloadDirname(roomID int64) string {
+	dir := fmt.Sprintf("%s/%d/%s",
+		LogRootDirectoryName,
+		roomID,
+		AttachementDirectoryName,
+	)
+	fmt.Println("dirname", dir)
+	return dir
 }

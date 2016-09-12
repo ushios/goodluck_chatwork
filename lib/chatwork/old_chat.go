@@ -1,12 +1,13 @@
 package chatwork
 
 import (
+	"encoding/csv"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
-	"strconv"
 	"time"
 )
 
@@ -22,25 +23,45 @@ var (
 	Retry = 5
 	// ChatLength max
 	ChatLength = 40
-	// FilenameRegExp from header
-	FilenameRegExp *regexp.Regexp
-	// DownloadRegExp from chat message
-	DownloadRegExp *regexp.Regexp
+	// FilenameRegexp from header
+	FilenameRegexp *regexp.Regexp
+	// DownloadRegexp from chat message
+	DownloadRegexp *regexp.Regexp
 )
 
 func init() {
-	FilenameRegExp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
-	DownloadRegExp = regexp.MustCompile(`[download:(\d+)].+[\/download]`)
+	FilenameRegexp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
+	DownloadRegexp = regexp.MustCompile(`\[download:(\d+)\].+\[\/download\]`)
 }
 
 // LoadAndSaveAllChat .
-func LoadAndSaveAllChat(cred *Credential, roomID int64, interval time.Duration) error {
+func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, interval time.Duration) error {
 	chatID := int64(0)
 
-	// create room directory
-	if err := checkDir(fmt.Sprintf("room%d", roomID)); err != nil {
+	accounts, err := AccountInfo(cred, contacts)
+	if err != nil {
 		return err
 	}
+
+	// get csv file handler
+	dirname := fmt.Sprintf("%s/%d", LogRootDirectoryName, roomID)
+	if err := checkDir(dirname); err != nil {
+		return err
+	}
+	filename := fmt.Sprintf("%s/%s", dirname, "messages.csv")
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	// converter := transform.NewWriter(file, japanese.ShiftJIS.NewEncoder())
+	writer := csv.NewWriter(file)
+
+	// create csv header
+	if err = file.Truncate(0); err != nil {
+		return err
+	}
+	writer.Write([]string{"chat_id", "time", "name", "account_id", "message"})
 
 	// logging
 	for {
@@ -49,9 +70,24 @@ func LoadAndSaveAllChat(cred *Credential, roomID int64, interval time.Duration) 
 			return err
 		}
 
+		// output body
 		for _, chat := range res.ChatList {
-			tm := time.Unix(int64(chat.TM), 0)
-			fmt.Println(chat.ID, tm.Format(time.RFC3339), chat.Message)
+			acc, ok := (*accounts)[chat.AID]
+			if !ok {
+				acc = Account{
+					ID:   chat.AID,
+					Name: "deleted user",
+				}
+			}
+
+			// Buffer to csv writer
+			row, err := createRow(roomID, &chat, &acc)
+			if err != nil {
+				return err
+			}
+			if err := writer.Write(row); err != nil {
+				return err
+			}
 		}
 
 		if len(res.ChatList) < ChatLength {
@@ -61,23 +97,9 @@ func LoadAndSaveAllChat(cred *Credential, roomID int64, interval time.Duration) 
 		time.Sleep(interval)
 		chatID = res.ChatList[len(res.ChatList)-1].ID
 	}
-	return nil
-}
 
-func download(roomID int64, message string) error {
-	res := DownloadRegExp.FindStringSubmatch(message)
-	if len(res) < 2 {
-		return nil
-	}
-
-	fID, err := strconv.ParseInt(res[1], 10, 64)
-	if err != nil {
-		return err
-	}
-
-	if err := DownloadFile(roomID, fID); err != nil {
-		return err
-	}
+	// Flush
+	writer.Flush()
 
 	return nil
 }
@@ -107,7 +129,7 @@ func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResul
 }
 
 // DownloadFile get file info
-func DownloadFile(roomID, fID int64) error {
+func DownloadFile(fID int64, dirpath string) error {
 	path := fmt.Sprintf(
 		"/gateway.php?cmd=download_file&bin=1&file_id=%d",
 		fID,
@@ -124,23 +146,17 @@ func DownloadFile(roomID, fID int64) error {
 		return err
 	}
 
-	// check directory
-	dirname := fmt.Sprintf("%s/%d/%s",
-		LogRootDirectoryName,
-		roomID,
-		AttachementDirectoryName,
-	)
-	if err := checkDir(dirname); err != nil {
-		return err
-	}
-
 	// Download file
 	d, err := ioutil.ReadAll(rawResp.Body)
 	if err != nil {
 		return err
 	}
 
-	dest := fmt.Sprintf("%s/%s", dirname, filename)
+	if err := checkDir(dirpath); err != nil {
+		return err
+	}
+
+	dest := fmt.Sprintf("%s/%s", dirpath, filename)
 	if err := ioutil.WriteFile(dest, d, 0644); err != nil {
 		return err
 	}
@@ -153,7 +169,7 @@ func filenameFromResponse(resp *http.Response) (string, error) {
 	if cd == "" {
 		return "", fmt.Errorf("Content-disposition was empty")
 	}
-	res := FilenameRegExp.FindStringSubmatch(cd)
+	res := FilenameRegexp.FindStringSubmatch(cd)
 	if len(res) < 2 {
 		return "", fmt.Errorf("filename not found")
 	}
