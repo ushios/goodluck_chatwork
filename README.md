@@ -7,18 +7,18 @@ goodluck_chatwork
 
 beta
 
-## Installation
+# Installation
 
 ```bash
 $ go get github.com/ushios/goodluck_chatwork
 ```
 
-## Usage
+# Usage
 
-- [Login](#login)
-- [Log](#log)
+- [List](#list) - show room list
+- [Log](#log) - save chat log to file
 
-### Login
+## List
 
 Show room info list.
 
@@ -32,7 +32,7 @@ $ goodluck_chatwork list --email xxxx@xxx.xxx --password yourpassword
 +----------+------+
 ```
 
-### Log
+## Log
 
 ```bash
 $ goodluck_chatwork log --email xxxx@xxx.xxx --password yourpassowrd --room 123456789
@@ -40,11 +40,11 @@ $ goodluck_chatwork log --email xxxx@xxx.xxx --password yourpassowrd --room 1234
 
 You can see room `ID` when using [login](#login) command.
 
-## Thanks
+# Thanks
 
 - https://github.com/swdyh/goodbye_chatwork
 
-## TODO
+# TODO
 
 - Using mobile user-agent for trans capacity
 - get out LoadAndSaveAllChat func from chatwork package
