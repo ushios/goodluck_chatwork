@@ -54,6 +54,11 @@ type (
 		GroupLimitNum   int                   `json:"group_limit_num"`
 	}
 
+	// AccountResult is result of account info
+	AccountResult struct {
+		AccountDat map[string]AccountDat `json:"account_dat"`
+	}
+
 	// RoomDat is room data
 	RoomDat struct {
 		MID  int64          `json:"mid"`
@@ -89,6 +94,11 @@ type (
 		AVID      string `json:"avid"`
 		MRID      int64  `json:"mrid"`
 		RID       int64  `json:"rid"`
+	}
+
+	// AccountDat is account
+	AccountDat struct {
+		ContactDat
 	}
 
 	// LoadOldChatResult is result

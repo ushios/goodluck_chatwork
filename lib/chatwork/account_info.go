@@ -3,7 +3,6 @@ package chatwork
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -14,13 +13,14 @@ type (
 		GetPrivateData int     `json:"get_private_data"`
 	}
 
-	// AccountInfoResponse .
-	AccountInfoResponse struct {
+	// Account .
+	Account struct {
+		Name string
 	}
 )
 
 // AccountInfo .
-func AccountInfo(cred *Credential, c *Contacts) (*[]AccountInfoResponse, error) {
+func AccountInfo(cred *Credential, c *Contacts) (*map[int64]Account, error) {
 	postStruct := AccountInfoRequest{
 		AID:            c.AIDs(),
 		GetPrivateData: 0,
@@ -32,7 +32,6 @@ func AccountInfo(cred *Credential, c *Contacts) (*[]AccountInfoResponse, error) 
 	}
 
 	postData := string(postJSON)
-	fmt.Println(postData)
 	path := fmt.Sprintf("/gateway.php?cmd=get_account_info&myid=%s&_v=1.80a&_av=4&_t=%s&ln=ja",
 		cred.MyID,
 		cred.AccessToken,
@@ -41,14 +40,23 @@ func AccountInfo(cred *Credential, c *Contacts) (*[]AccountInfoResponse, error) 
 	values := url.Values{}
 	values.Add("pdata", postData)
 
-	resp, err := client().PostForm(u(path), values)
+	rawResp, err := client().PostForm(u(path), values)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer rawResp.Body.Close()
 
-	d, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(d))
+	result := AccountResult{}
+	if _, err := ReadResponse(rawResp, &result); err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	m := map[int64]Account{}
+	for _, acc := range result.AccountDat {
+		m[acc.AID] = Account{
+			Name: acc.Name,
+		}
+	}
+
+	return &m, nil
 }
