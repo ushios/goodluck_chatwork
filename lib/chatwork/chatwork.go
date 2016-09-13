@@ -22,9 +22,10 @@ type (
 
 	// Contact data
 	Contact struct {
-		ID   string
-		AID  int64
-		Name string
+		ID        string
+		AID       int64
+		Name      string
+		IsDeleted bool
 	}
 
 	// Room data
@@ -93,9 +94,10 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 	cMap := res.ContactDat
 	for k, con := range cMap {
 		c := Contact{
-			ID:   k,
-			AID:  con.AID,
-			Name: con.Name,
+			ID:        k,
+			AID:       con.AID,
+			Name:      con.Name,
+			IsDeleted: con.IsDeleted,
 		}
 		cs.ContactList = append(cs.ContactList, c)
 	}
