@@ -26,3 +26,5 @@ _testmain.go
 .goodluck_chatwork*
 lib/chatwork/chatwork_log
 chatwork_log
+bin/*
+!.gitempty
