@@ -59,7 +59,7 @@ func CmdList(c *cli.Context) error {
 
 	rTable := tablewriter.NewWriter(os.Stdout)
 	rTable.SetHeader([]string{"ID", "Name"})
-	for _, room := range contacts.RoomList {
+	for _, room := range contacts.RoomMap {
 		row := []string{
 			room.ID,
 			room.Name,

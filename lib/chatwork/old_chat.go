@@ -44,7 +44,11 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 	}
 
 	// get csv file handler
-	dirname := fmt.Sprintf("%s/%d", LogRootDirectoryName, roomID)
+	room, ok := contacts.RoomMap[roomID]
+	if !ok {
+		return fmt.Errorf("room (%d) not found", roomID)
+	}
+	dirname := fmt.Sprintf("%s/%s", LogRootDirectoryName, room.Name)
 	if err := checkDir(dirname); err != nil {
 		return err
 	}

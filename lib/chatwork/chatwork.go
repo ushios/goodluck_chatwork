@@ -16,8 +16,8 @@ const (
 type (
 	// Contacts have contacts and room info
 	Contacts struct {
-		ContactList []Contact
-		RoomList    []Room
+		ContactMap map[int64]Contact
+		RoomMap    map[int64]Room
 	}
 
 	// Contact data
@@ -41,11 +41,11 @@ func (c *Contacts) AIDs() []int64 {
 	ids := []int64{}
 	m := map[int64]bool{}
 
-	for _, con := range c.ContactList {
+	for _, con := range c.ContactMap {
 		m[con.AID] = true
 	}
 
-	for _, room := range c.RoomList {
+	for _, room := range c.RoomMap {
 		for _, aid := range room.AIDList {
 			m[aid] = true
 		}
@@ -87,8 +87,8 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 
 func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 	cs := Contacts{
-		ContactList: []Contact{},
-		RoomList:    []Room{},
+		ContactMap: map[int64]Contact{},
+		RoomMap:    map[int64]Room{},
 	}
 
 	cMap := res.ContactDat
@@ -99,7 +99,11 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 			Name:      con.Name,
 			IsDeleted: con.IsDeleted,
 		}
-		cs.ContactList = append(cs.ContactList, c)
+		cID, err := strconv.ParseInt(k, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		cs.ContactMap[cID] = c
 	}
 
 	rMap := res.RoomDat
@@ -137,7 +141,11 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 			Name:    name,
 		}
 
-		cs.RoomList = append(cs.RoomList, r)
+		rID, err := strconv.ParseInt(k, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		cs.RoomMap[rID] = r
 	}
 
 	return &cs, nil
