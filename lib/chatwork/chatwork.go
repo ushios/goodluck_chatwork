@@ -72,7 +72,7 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 		return nil, err
 	}
 
-	c, err := createContacts(&result)
+	c, err := createContacts(cred, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func InitLoad(cred *Credential) (*Contacts, error) {
 	return c, nil
 }
 
-func createContacts(res *InitLoadResult) (*Contacts, error) {
+func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 	cs := Contacts{
 		ContactList: []Contact{},
 		RoomList:    []Room{},
@@ -94,7 +94,6 @@ func createContacts(res *InitLoadResult) (*Contacts, error) {
 				AID:  con.AID,
 				Name: con.Name,
 			}
-
 			cs.ContactList = append(cs.ContactList, c)
 		}
 	}
@@ -110,10 +109,28 @@ func createContacts(res *InitLoadResult) (*Contacts, error) {
 			aIDList = append(aIDList, aID)
 		}
 
+		var name string
+		switch rm.TP {
+		case 1:
+			name = rm.Name
+		case 2:
+			for key := range rm.M {
+				if key != cred.MyID {
+					if con, ok := cMap[key]; !ok {
+						name = "deleted user [DM]"
+					} else {
+						name = con.Name
+					}
+				}
+			}
+		case 3:
+			name = "My Chat"
+		}
+
 		r := Room{
 			ID:      k,
 			AIDList: aIDList,
-			Name:    rm.Name,
+			Name:    name,
 		}
 
 		cs.RoomList = append(cs.RoomList, r)

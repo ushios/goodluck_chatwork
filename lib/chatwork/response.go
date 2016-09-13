@@ -64,7 +64,7 @@ type (
 		MID  int64          `json:"mid"`
 		R    int            `json:"r"`
 		S    int            `json:"s"`
-		TP   int            `json:"tp"`
+		TP   int            `json:"tp"` // 1: group, 2:DM, 3: self
 		C    int            `json:"c"`
 		F    int            `json:"f"`
 		T    int            `json:"t"`
