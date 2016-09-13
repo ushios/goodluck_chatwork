@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+	nameTemplate = "%s"
+)
+
 type (
 	// Contacts have contacts and room info
 	Contacts struct {
@@ -108,7 +112,6 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 		}
 
 		var name string
-		nameTemplate := "%s"
 		switch rm.TP {
 		case 1:
 			name = rm.Name
