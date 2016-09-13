@@ -108,7 +108,7 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 		}
 
 		var name string
-		nameTemplate := "[DM] - %s"
+		nameTemplate := "%s"
 		switch rm.TP {
 		case 1:
 			name = rm.Name
