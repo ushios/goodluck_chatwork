@@ -2,6 +2,7 @@ package chatwork
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -27,6 +28,8 @@ var (
 	FilenameRegexp *regexp.Regexp
 	// DownloadRegexp from chat message
 	DownloadRegexp *regexp.Regexp
+	// ErrFilenameNotFound filename not found in header
+	ErrFilenameNotFound = errors.New("ErrFilenameNotFound")
 )
 
 func init() {
@@ -152,7 +155,12 @@ func DownloadFile(fID int64, dirpath string) error {
 	// create filename
 	filename, err := filenameFromResponse(rawResp)
 	if err != nil {
-		return err
+		switch err {
+		case ErrFilenameNotFound:
+			filename = fmt.Sprintf("unknown-file-%d", fID)
+		default:
+			return err
+		}
 	}
 
 	// Download file
@@ -180,7 +188,7 @@ func filenameFromResponse(resp *http.Response) (string, error) {
 	}
 	res := FilenameRegexp.FindStringSubmatch(cd)
 	if len(res) < 2 {
-		return "", fmt.Errorf("filename not found")
+		return "", ErrFilenameNotFound
 	}
 
 	filename, err := url.QueryUnescape(res[1])
