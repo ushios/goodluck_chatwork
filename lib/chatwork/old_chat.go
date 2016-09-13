@@ -92,6 +92,11 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 			if err := writer.Write(row); err != nil {
 				return err
 			}
+
+			// download if file exists
+			if err := download(roomID, chat.Message, dirname); err != nil {
+				return err
+			}
 		}
 
 		if len(res.ChatList) < ChatLength {

@@ -192,13 +192,11 @@ func createRow(roomID int64, chat *ChatMessage, acc *Account) ([]string, error) 
 	accID := strconv.FormatInt(acc.ID, 10)
 	message := chat.Message
 
-	download(roomID, message)
-
 	// fmt.Println(chat.ID, tm.Format(time.RFC3339), acc.Name, acc.ID, chat.Message)
 	return []string{chatID, tm.Format(time.RFC3339), name, accID, message}, nil
 }
 
-func download(roomID int64, message string) error {
+func download(roomID int64, message string, parentDirName string) error {
 	res := DownloadRegexp.FindStringSubmatch(message)
 	if len(res) < 2 {
 		return nil
@@ -209,17 +207,16 @@ func download(roomID int64, message string) error {
 		return err
 	}
 
-	if err := DownloadFile(fID, downloadDirname(roomID)); err != nil {
+	if err := DownloadFile(fID, downloadDirname(parentDirName)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func downloadDirname(roomID int64) string {
-	dir := fmt.Sprintf("%s/%d/%s",
-		LogRootDirectoryName,
-		roomID,
+func downloadDirname(parentDirName string) string {
+	dir := fmt.Sprintf("%s/%s",
+		parentDirName,
 		AttachementDirectoryName,
 	)
 

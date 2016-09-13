@@ -17,6 +17,7 @@ $ go get github.com/ushios/goodluck_chatwork
 
 - [List](#list) - show room list
 - [Log](#log) - save chat log to file
+- [LogAll](#logall) - save all chat log to file
 
 ## List
 
@@ -39,6 +40,14 @@ $ goodluck_chatwork log --email xxxx@xxx.xxx --password yourpassowrd --room 1234
 ```
 
 You can see room `ID` when using [login](#login) command.
+
+## LogAll
+
+Save all chat log and attachement files.
+
+```bash
+$ goodluck_chatwork logall --email xxxx@xxx.xxx --password yourpassword
+```
 
 # Thanks
 

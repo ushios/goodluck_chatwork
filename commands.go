@@ -29,16 +29,11 @@ var Commands = []cli.Command{
 				Name:  "password",
 				Usage: "Your password",
 			},
-			cli.StringFlag{
-				Name:  "credential",
-				Value: DefaultCredentialFilePath,
-				Usage: "temporary file path",
-			},
 		},
 	},
 	{
 		Name:        "log",
-		Description: "List chat log",
+		Description: "Save chat log to file",
 		Action:      command.CmdLog,
 		Flags: []cli.Flag{
 			cli.StringFlag{
@@ -52,6 +47,21 @@ var Commands = []cli.Command{
 			cli.IntFlag{
 				Name:  "room",
 				Usage: "room or contact id",
+			},
+		},
+	},
+	{
+		Name:        "logall",
+		Description: "Save all chat log to file",
+		Action:      command.CmdLogAll,
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "email",
+				Usage: "Your registed email address",
+			},
+			cli.StringFlag{
+				Name:  "password",
+				Usage: "Your password",
 			},
 		},
 	},

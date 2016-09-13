@@ -54,7 +54,10 @@ func TestDownloadFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = DownloadFile(fID, downloadDirname(1))
+		err = DownloadFile(fID, fmt.Sprintf("./%s/%s",
+			LogRootDirectoryName,
+			AttachementDirectoryName,
+		))
 		if err != nil {
 			t.Fatal(err)
 		}
