@@ -88,14 +88,12 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 
 	cMap := res.ContactDat
 	for k, con := range cMap {
-		if !con.IsDeleted {
-			c := Contact{
-				ID:   k,
-				AID:  con.AID,
-				Name: con.Name,
-			}
-			cs.ContactList = append(cs.ContactList, c)
+		c := Contact{
+			ID:   k,
+			AID:  con.AID,
+			Name: con.Name,
 		}
+		cs.ContactList = append(cs.ContactList, c)
 	}
 
 	rMap := res.RoomDat
@@ -110,6 +108,7 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 		}
 
 		var name string
+		nameTemplate := "[DM] - %s"
 		switch rm.TP {
 		case 1:
 			name = rm.Name
@@ -117,9 +116,9 @@ func createContacts(cred *Credential, res *InitLoadResult) (*Contacts, error) {
 			for key := range rm.M {
 				if key != cred.MyID {
 					if con, ok := cMap[key]; !ok {
-						name = "deleted user [DM]"
+						name = fmt.Sprintf(nameTemplate, "unknown user")
 					} else {
-						name = con.Name
+						name = fmt.Sprintf(nameTemplate, con.Name)
 					}
 				}
 			}
