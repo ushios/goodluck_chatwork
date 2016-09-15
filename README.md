@@ -13,6 +13,8 @@ beta
 $ go get github.com/ushios/goodluck_chatwork
 ```
 
+or download binary from [releases](https://github.com/ushios/goodluck_chatwork/releases)
+
 # Usage
 
 - [List](#list) - show room list
