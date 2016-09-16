@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/urfave/cli"
 	"github.com/ushios/goodluck_chatwork/lib/chatwork"
@@ -29,7 +30,7 @@ func CmdLogAll(c *cli.Context) error {
 	}
 
 	for rID, room := range contacts.RoomMap {
-		fmt.Printf("logging %s \n", room.Name)
+		log.Printf("Start - %s \n", room.Name)
 		err = chatwork.LoadAndSaveAllChat(cred, contacts, rID, DefaultInterval)
 		if err != nil {
 			fmt.Println(err)

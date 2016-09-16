@@ -142,3 +142,18 @@ func ReadResponse(r *http.Response, result interface{}) (*Response, error) {
 
 	return &resp, nil
 }
+
+// Len for sort
+func (l LoadOldChatResult) Len() int {
+	return len(l.ChatList)
+}
+
+// Swap for sort
+func (l LoadOldChatResult) Swap(i, j int) {
+	l.ChatList[i], l.ChatList[j] = l.ChatList[j], l.ChatList[i]
+}
+
+// Less for sort
+func (l LoadOldChatResult) Less(i, j int) bool {
+	return l.ChatList[i].ID < l.ChatList[j].ID
+}

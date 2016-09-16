@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
+	"sort"
 	"time"
 )
 
@@ -51,7 +53,8 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 	if !ok {
 		return fmt.Errorf("room (%d) not found", roomID)
 	}
-	dirname := fmt.Sprintf("%s/%s", LogRootDirectoryName, room.Name)
+
+	dirname := fmt.Sprintf("%s/%s(%s)", LogRootDirectoryName, room.Name, room.ID)
 	if err := checkDir(dirname); err != nil {
 		return err
 	}
@@ -72,6 +75,7 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 
 	// logging
 	for {
+		log.Printf("Downloading %d - %d messages \n", roomID, chatID)
 		res, err := LoadOldChat(cred, roomID, chatID)
 		if err != nil {
 			return err
@@ -136,6 +140,9 @@ func LoadOldChat(cred *Credential, roomID, firstChatID int64) (*LoadOldChatResul
 	if err != nil {
 		return nil, err
 	}
+
+	// sort by ID
+	sort.Sort(sort.Reverse(result))
 
 	return &result, nil
 }
