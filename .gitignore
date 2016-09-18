@@ -24,7 +24,7 @@ _testmain.go
 *.prof
 
 .goodluck_chatwork*
-lib/chatwork/chatwork_log
+lib/chatwork/chatwork_log_test
 chatwork_log
 bin/*
 !.gitempty

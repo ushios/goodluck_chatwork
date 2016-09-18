@@ -1,6 +1,7 @@
 package command
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -56,6 +57,7 @@ func download(roomID int64, message string, parentDirName string) error {
 		}
 	}
 
+	log.Printf("file(%d) downloading... \n", fID)
 	if err := chatwork.DownloadFile(fID, downloadDirname(parentDirName)); err != nil {
 		return err
 	}
