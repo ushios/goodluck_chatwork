@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"time"
@@ -54,11 +55,12 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 		return fmt.Errorf("room (%d) not found", roomID)
 	}
 
-	dirname := fmt.Sprintf("%s/%s(%s)", LogRootDirectoryName, room.Name, room.ID)
-	if err := checkDir(dirname); err != nil {
+	dirname := fmt.Sprintf("%s(%s)", room.Name, room.ID)
+	dirpath := filepath.Join(LogRootDirectoryName, dirname)
+	if err := checkDir(dirpath); err != nil {
 		return err
 	}
-	filename := fmt.Sprintf("%s/%s", dirname, "messages.csv")
+	filename := filepath.Join(dirpath, "messages.csv")
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
@@ -101,7 +103,7 @@ func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, inte
 			}
 
 			// download if file exists
-			if err := download(roomID, chat.Message, dirname); err != nil {
+			if err := download(roomID, chat.Message, dirpath); err != nil {
 				return err
 			}
 		}
@@ -180,7 +182,7 @@ func DownloadFile(fID int64, dirpath string) error {
 		return err
 	}
 
-	dest := fmt.Sprintf("%s/%s", dirpath, filename)
+	dest := filepath.Join(dirpath, filename)
 	if err := ioutil.WriteFile(dest, d, 0644); err != nil {
 		return err
 	}

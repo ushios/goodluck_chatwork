@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -215,7 +216,7 @@ func download(roomID int64, message string, parentDirName string) error {
 }
 
 func downloadDirname(parentDirName string) string {
-	dir := fmt.Sprintf("%s/%s",
+	dir := filepath.Join(
 		parentDirName,
 		AttachementDirectoryName,
 	)
