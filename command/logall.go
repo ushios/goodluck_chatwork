@@ -31,7 +31,7 @@ func CmdLogAll(c *cli.Context) error {
 
 	for rID, room := range contacts.RoomMap {
 		log.Printf("Start - %s \n", room.Name)
-		err = chatwork.LoadAndSaveAllChat(cred, contacts, rID, DefaultInterval)
+		err = LoadAndSaveAllChat(cred, contacts, rID, DefaultInterval)
 		if err != nil {
 			fmt.Println(err)
 			return err

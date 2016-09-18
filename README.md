@@ -58,4 +58,3 @@ $ goodluck_chatwork logall --email xxxx@xxx.xxx --password yourpassword
 # TODO
 
 - Using mobile user-agent for trans capacity
-- get out LoadAndSaveAllChat func from chatwork package

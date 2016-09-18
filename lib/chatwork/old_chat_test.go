@@ -2,8 +2,8 @@ package chatwork
 
 import (
 	"fmt"
+	"path/filepath"
 	"testing"
-	"time"
 )
 
 func TestLoadOldChat(t *testing.T) {
@@ -25,28 +25,6 @@ func TestLoadOldChat(t *testing.T) {
 
 }
 
-func TestLoadAndSaveAllChat(t *testing.T) {
-	test := func(id, pass string, roomID int64) {
-		cred, err := Login(id, pass)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		contacts, err := InitLoad(cred)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		interval := 1 * time.Second
-		if err := LoadAndSaveAllChat(cred, contacts, roomID, interval); err != nil {
-			t.Fatal(err)
-		}
-
-	}
-
-	test(email, pass, 57468721)
-}
-
 func TestDownloadFile(t *testing.T) {
 	test := func(id, pass string, fID int64) {
 		_, err := Login(id, pass)
@@ -54,9 +32,10 @@ func TestDownloadFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = DownloadFile(fID, fmt.Sprintf("./%s/%s",
-			LogRootDirectoryName,
-			AttachementDirectoryName,
+		err = DownloadFile(fID, filepath.Join(
+			".",
+			"chatwork_log_test",
+			"attachements",
 		))
 		if err != nil {
 			t.Fatal(err)

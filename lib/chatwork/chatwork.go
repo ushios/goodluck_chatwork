@@ -1,17 +1,21 @@
 package chatwork
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/cookiejar"
 	"os"
-	"path/filepath"
 	"strconv"
-	"time"
 )
 
 const (
 	nameTemplate = "%s"
+)
+
+var (
+	// ErrFileIDNotFound .
+	ErrFileIDNotFound = errors.New("ErrFileIDNotFound")
 )
 
 type (
@@ -186,40 +190,17 @@ func checkDir(path string) error {
 	return err
 }
 
-func createRow(roomID int64, chat *ChatMessage, acc *Account) ([]string, error) {
-	chatID := strconv.FormatInt(chat.ID, 10)
-	tm := time.Unix(int64(chat.TM), 0)
-	name := acc.Name
-	accID := strconv.FormatInt(acc.ID, 10)
-	message := chat.Message
-
-	// fmt.Println(chat.ID, tm.Format(time.RFC3339), acc.Name, acc.ID, chat.Message)
-	return []string{chatID, tm.Format(time.RFC3339), name, accID, message}, nil
-}
-
-func download(roomID int64, message string, parentDirName string) error {
+// FileIDFromMessage get file id from message
+func FileIDFromMessage(message string) (int64, error) {
 	res := DownloadRegexp.FindStringSubmatch(message)
 	if len(res) < 2 {
-		return nil
+		return 0, ErrFileIDNotFound
 	}
 
 	fID, err := strconv.ParseInt(res[1], 10, 64)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	if err := DownloadFile(fID, downloadDirname(parentDirName)); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func downloadDirname(parentDirName string) string {
-	dir := filepath.Join(
-		parentDirName,
-		AttachementDirectoryName,
-	)
-
-	return dir
+	return fID, nil
 }

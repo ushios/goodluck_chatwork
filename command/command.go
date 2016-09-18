@@ -1,46 +1,73 @@
 package command
 
 import (
-	"bufio"
-	"encoding/json"
-	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strconv"
+	"time"
+
+	"github.com/ushios/goodluck_chatwork/lib/chatwork"
+)
+
+const (
+	// LogRootDirectoryName log root
+	LogRootDirectoryName = "./chatwork_log"
+	// AttachementDirectoryName file dir.
+	AttachementDirectoryName = "./attachements"
 )
 
 func init() {
 
 }
 
-// LoadCredential load from file
-func LoadCredential(path string) (*LoginInfo, error) {
-	var info *LoginInfo
-
-	js, err := ioutil.ReadFile(path)
-	if err != nil {
-		return info, err
+func checkDir(path string) error {
+	_, err := os.Stat(path)
+	if err == nil {
+		return nil
 	}
 
-	if err := json.Unmarshal(js, info); err != nil {
-		return info, err
+	if os.IsNotExist(err) {
+		os.MkdirAll(path, 0755)
+		return nil
 	}
 
-	return info, nil
+	return err
 }
 
-// SaveCredential save to file
-func SaveCredential(path string, li *LoginInfo) error {
-	js, err := json.Marshal(li)
+func createRow(roomID int64, chat *chatwork.ChatMessage, acc *chatwork.Account) ([]string, error) {
+	chatID := strconv.FormatInt(chat.ID, 10)
+	tm := time.Unix(int64(chat.TM), 0)
+	name := acc.Name
+	accID := strconv.FormatInt(acc.ID, 10)
+	message := chat.Message
+
+	// fmt.Println(chat.ID, tm.Format(time.RFC3339), acc.Name, acc.ID, chat.Message)
+	return []string{chatID, tm.Format(time.RFC3339), name, accID, message}, nil
+}
+
+func download(roomID int64, message string, parentDirName string) error {
+	fID, err := chatwork.FileIDFromMessage(message)
 	if err != nil {
-		return err
+		switch err {
+		case chatwork.ErrFileIDNotFound:
+			return nil
+		default:
+			return err
+		}
 	}
 
-	f, _ := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0600)
-	defer f.Close()
-	writer := bufio.NewWriter(f)
-	if _, err := writer.Write(js); err != nil {
+	if err := chatwork.DownloadFile(fID, downloadDirname(parentDirName)); err != nil {
 		return err
 	}
-	writer.Flush()
 
 	return nil
+}
+
+func downloadDirname(parentDirName string) string {
+	dir := filepath.Join(
+		parentDirName,
+		AttachementDirectoryName,
+	)
+
+	return dir
 }

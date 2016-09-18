@@ -1,25 +1,14 @@
 package chatwork
 
 import (
-	"encoding/csv"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
-	"time"
-)
-
-const (
-	// AttachementDirectoryName file dir.
-	AttachementDirectoryName = "./attachements"
-	// LogRootDirectoryName log root
-	LogRootDirectoryName = "./chatwork_log"
 )
 
 var (
@@ -38,88 +27,6 @@ var (
 func init() {
 	FilenameRegexp = regexp.MustCompile(`filename\*=UTF-8''(.+)`)
 	DownloadRegexp = regexp.MustCompile(`\[download:(\d+)\].+\[\/download\]`)
-}
-
-// LoadAndSaveAllChat .
-func LoadAndSaveAllChat(cred *Credential, contacts *Contacts, roomID int64, interval time.Duration) error {
-	chatID := int64(0)
-
-	accounts, err := AccountInfo(cred, contacts)
-	if err != nil {
-		return err
-	}
-
-	// get csv file handler
-	room, ok := contacts.RoomMap[roomID]
-	if !ok {
-		return fmt.Errorf("room (%d) not found", roomID)
-	}
-
-	dirname := fmt.Sprintf("%s(%s)", room.Name, room.ID)
-	dirpath := filepath.Join(LogRootDirectoryName, dirname)
-	if err := checkDir(dirpath); err != nil {
-		return err
-	}
-	filename := filepath.Join(dirpath, "messages.csv")
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	// converter := transform.NewWriter(file, japanese.ShiftJIS.NewEncoder())
-	writer := csv.NewWriter(file)
-
-	// create csv header
-	if err = file.Truncate(0); err != nil {
-		return err
-	}
-	writer.Write([]string{"chat_id", "time", "name", "account_id", "message"})
-
-	// logging
-	for {
-		log.Printf("Downloading %d - %d messages \n", roomID, chatID)
-		res, err := LoadOldChat(cred, roomID, chatID)
-		if err != nil {
-			return err
-		}
-
-		// output body
-		for _, chat := range res.ChatList {
-			acc, ok := (*accounts)[chat.AID]
-			if !ok {
-				acc = Account{
-					ID:   chat.AID,
-					Name: "deleted user",
-				}
-			}
-
-			// Buffer to csv writer
-			row, err := createRow(roomID, &chat, &acc)
-			if err != nil {
-				return err
-			}
-			if err := writer.Write(row); err != nil {
-				return err
-			}
-
-			// download if file exists
-			if err := download(roomID, chat.Message, dirpath); err != nil {
-				return err
-			}
-		}
-
-		if len(res.ChatList) < ChatLength {
-			break
-		}
-
-		time.Sleep(interval)
-		chatID = res.ChatList[len(res.ChatList)-1].ID
-	}
-
-	// Flush
-	writer.Flush()
-
-	return nil
 }
 
 // LoadOldChat loading chat logs
