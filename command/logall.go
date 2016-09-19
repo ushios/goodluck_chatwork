@@ -38,5 +38,6 @@ func CmdLogAll(c *cli.Context) error {
 		}
 	}
 
+	log.Println("Finished")
 	return nil
 }
