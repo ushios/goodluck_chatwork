@@ -1,5 +1,5 @@
 BIN_DIR=./bin
-VERSION=0.1.2
+VERSION=0.1.3
 
 build-cross:
 	rm -rf ${BIN_DIR}/*
